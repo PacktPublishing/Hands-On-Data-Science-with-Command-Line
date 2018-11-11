@@ -1,0 +1,50 @@
+<code>
+alias gnuplot="__gnuplot"
+__gnuplot() {
+    SIZE=$(stty size 2>/dev/null)
+    SIZE=${SIZE:-$(tput lines) $(tput cols)}
+    COLS=${SIZE#* }
+    ROWS=${SIZE% *}
+    XPX=${XPX:-13}
+    YPX=${YPX:-24}
+    COLUMNS=${COLUMNS:-${COLS}}
+    LINES=$((${LINES:-${ROWS}}-3))
+    case "${GNUTERM%% *}" in
+        dumb) X=${COLUMNS} ; Y=${LINES} ; DCS_GUARD="cat" ;;
+        png) X=$((XPX*COLUMNS)) ; Y=$((YPX*LINES)) ; DCS_GUARD="imgcat";;
+        sixelgd) X=$((XPX*COLUMNS)) ; Y=$((YPX*LINES));;
+    esac
+    sed -i "s/^set term[[:space:]][^[:space:]]*/set term ${GNUTERM%% *}/" ~/.gnuplot
+    GNUTERM="${GNUTERM} size $X,$Y" \gnuplot "$@" | ${DCS_GUARD:-cat}
+}
+
+alias barchart="FUNCNAME=barchart __barchart"
+__barchart() {
+    local STACKED
+    local DATA
+
+    OPTIND=1 ; while getopts ":hf:s" opt; do
+        case ${opt} in
+            f) [ -r "${OPTARG}" ] && DATA=$(printf '$data <<EOD\n' ; cat "${OPTARG}" ; printf 'EOD\n')
+                ;;
+            s) STACKED="; set style histogram rowstacked ; set boxwidth 0.75"
+                ;;
+            h|\?) printf "Usage: ${FUNCNAME} [-s] [-f <file>] <gnuplot commands\n"
+                return
+                ;;
+        esac
+    done
+    shift $(($OPTIND - 1))
+
+    {
+    cat <<-EOF
+    $DATA
+    set key autotitle columnheader outside
+    set style data histograms ${STACKED}
+    set style fill solid border lt -1
+    set xtics rotate by -45
+    EOF
+    printf "%s" "$@"
+    } | gnuplot
+}
+
