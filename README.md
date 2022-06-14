@@ -1,7 +1,3 @@
-## [Get this title for $10 on Packt's Spring Sale](https://www.packt.com/B10819?utm_source=github&utm_medium=packt-github-repo&utm_campaign=spring_10_dollar_2022)
------
-For a limited period, all eBooks and Videos are only $10. All the practical content you need \- by developers, for developers
-
 # Hands-On-Data-Science-with-Command-Line
 <a href="https://www.packtpub.com/big-data-and-business-intelligence/hands-data-science-command-line?utm_source=github&utm_medium=repository&utm_campaign=9781789132984"><img src="https://www.packtpub.com/sites/default/files/cover_B10819.png" alt="Hands-On Data Science with the Command Line" height="256px" align="right"></a>
 
